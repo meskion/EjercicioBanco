@@ -35,6 +35,10 @@ public class Cuenta {
 		this.saldo = saldo;
 	}
 
+	/**
+	 * Añade la cantidad especificada al saldo de la cuenta,
+	 * @param ingreso
+	 */
 	
 	public void ingresarDinero(double ingreso) {
 		double ingr = Math.abs(ingreso);

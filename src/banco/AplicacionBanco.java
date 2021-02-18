@@ -59,6 +59,11 @@ public class AplicacionBanco {
 
 	}
 
+	/**
+	 * Crea por consola un nuevo cliente para añadirlo al sistema, y lleva a la
+	 * vista de creacion y acceso a cuentas.
+	 */
+
 	private static void nuevoCliente() {
 		if (clientes.size() < 1000) {
 			System.out.print("Introduzca su DNI:");
@@ -69,18 +74,28 @@ public class AplicacionBanco {
 			String apellidos = sc.nextLine();
 			System.out.print("Introduzca su telefono:");
 			String telefono = sc.nextLine();
-	
+
 			Cliente c = new Cliente(dni, nombre, apellidos, telefono);
 			clientes.put(dni, c);
 			menuCuentasCliente(c);
-	
+
 		} else {
 			System.out.println("Lo sentimos pero no podemos admitir mas clientes en este momento");
 		}
-	
+
 	}
 
+	/**
+	 * Introduciendo la clave de un cliente que exista en el sistema, le da acceso a
+	 * menu de control del cliente.
+	 */
 	private static void accesoCliente() {
+
+		if (clientes.isEmpty()) {
+			System.out.println("No Hay clientes en la base de datos");
+			return;
+		}
+
 		boolean fail = true;
 		do {
 			System.out.print("Introduzca su DNI para acceder:");
@@ -101,15 +116,22 @@ public class AplicacionBanco {
 		System.out.println("3. Listar Cuentas");
 		System.out.println("4. Saldo total");
 		System.out.println("5. Volver a vista general");
-	
+
 	}
+
+	/**
+	 * Menu para un cliente, para permitirle interactuar con sus cuentas, crearlas,
+	 * visualizar su saldo, etc
+	 * 
+	 * @param cliente
+	 */
 
 	private static void menuCuentasCliente(Cliente cliente) {
 		String opcion;
 		do {
 			menu2();
 			opcion = sc.nextLine();
-	
+
 			switch (opcion) {
 			case "1":
 				nuevaCuenta(cliente);
@@ -117,25 +139,32 @@ public class AplicacionBanco {
 			case "2":
 				accesoCuenta(cliente);
 				break;
-	
+
 			case "3":
 				listarCuentas(cliente);
 				break;
-	
+
 			case "4":
 				saldoTotal(cliente);
 				break;
 			case "5":
 				System.out.println("cerrando sesion..");
 				break;
-	
+
 			default:
 				break;
 			}
-	
+
 		} while (!opcion.equals("5"));
-	
+
 	}
+
+	/**
+	 * Crea una nueva cuenta para el cliente actual, y le lleva directamente al menu
+	 * interno de operaciones en la cuenta
+	 * 
+	 * @param cliente
+	 */
 
 	private static void nuevaCuenta(Cliente cliente) {
 		if (contCuentas < 1000) {
@@ -146,18 +175,30 @@ public class AplicacionBanco {
 		} else {
 			System.out.println("No esta disponible la creacion de cuentas en este momento.");
 		}
-	
+
 	}
 
+	/**
+	 * Introduciendo el indice de un cuenta en su lista, da acceso al cliente al
+	 * menu de operaciones de cuenta.
+	 * 
+	 * @param cliente
+	 */
+
 	private static void accesoCuenta(Cliente cliente) {
+
+		if (cliente.getCuentas().isEmpty()) {
+			System.out.println("El cliente no tiene cuentas asociadas");
+			return;
+		}
+
 		boolean fail = true;
 		do {
 			System.out.print("Introduzca la cuenta a acceder:");
 			listarCuentas(cliente);
 			int index = Integer.parseInt(sc.nextLine());
 			fail = index >= cliente.getCuentas().size() || index < 0;
-			;
-	
+
 			if (!fail) {
 				Cuenta cuenta = cliente.getCuentas().get(index);
 				menuCuenta(cuenta);
@@ -165,23 +206,39 @@ public class AplicacionBanco {
 				System.err.println("introduzca un numero de la lista de cuentas");
 			}
 		} while (fail);
-	
+
 	}
 
+	/**
+	 * Muestra las cuentas asociadas al cliente especificado
+	 * 
+	 * @param cliente
+	 */
+
 	private static void listarCuentas(Cliente cliente) {
+		if (cliente.getCuentas().isEmpty()){
+			System.out.println("No hay cuentas");
+			return;
+		}
 		List<Cuenta> cuentas = cliente.getCuentas();
 		for (int i = 0; i < cuentas.size(); i++) {
 			System.out.println(i + ": " + cuentas.get(i).toString());
 		}
-	
+
 	}
 
+	/**
+	 * Muestra el saldo combinado de todas la cuentas del cliente.
+	 * 
+	 * @param cliente
+	 */
+
 	private static void saldoTotal(Cliente cliente) {
-		//double saldoTotal = cliente.getCuentas().stream().reduce(0.0,
-		//		(subtotal, element) -> subtotal + element.getSaldo(), Double::sum);
-		
-		double saldoTotal = cliente.getCuentas().stream().map(c -> c.getSaldo()).reduce(0.0, (t, s) -> t + s );
-		
+		// double saldoTotal = cliente.getCuentas().stream().reduce(0.0,
+		// (subtotal, element) -> subtotal + element.getSaldo(), Double::sum);
+
+		double saldoTotal = cliente.getCuentas().stream().map(c -> c.getSaldo()).reduce(0.0, (t, s) -> t + s);
+
 		System.out.println("El saldo total es " + saldoTotal);
 	}
 
@@ -190,15 +247,22 @@ public class AplicacionBanco {
 		System.out.println("2: Retirar Dinero");
 		System.out.println("3: consultar Saldo");
 		System.out.println("4: Volver a mis cuentas");
-	
+
 	}
+
+	/**
+	 * Menu donde el cliente puede operar con una cuenta especificada, moviendo
+	 * dinero o consultando su saldo.
+	 * 
+	 * @param cuenta
+	 */
 
 	private static void menuCuenta(Cuenta cuenta) {
 		String opcion;
 		do {
 			menu3();
 			opcion = sc.nextLine();
-	
+
 			switch (opcion) {
 			case "1":
 				ingresarDinero(cuenta);
@@ -206,23 +270,28 @@ public class AplicacionBanco {
 			case "2":
 				retirarDinero(cuenta);
 				break;
-	
+
 			case "3":
 				consultarSaldo(cuenta);
 				break;
-	
+
 			case "4":
 				System.out.println("Volviendo atras..");
 				break;
-	
+
 			default:
 				break;
 			}
-	
+
 		} while (!opcion.equals("4"));
-	
+
 	}
 
+	/**
+	 * Retira dinero de la cuenta, siempre que tenga dinero suficiente.
+	 * 
+	 * @param cuenta
+	 */
 	private static void retirarDinero(Cuenta cuenta) {
 		System.out.println("Cuanto dinero deseas retirar? saldo: " + cuenta.getSaldo());
 		double retiro = Double.parseDouble(sc.nextLine());
@@ -231,18 +300,29 @@ public class AplicacionBanco {
 		} else {
 			System.out.println("Fondos insuficientes");
 		}
-	
+
 	}
+
+	/**
+	 * Ingresa dinero en la cuenta especificada
+	 * 
+	 * @param cuenta
+	 */
 
 	private static void ingresarDinero(Cuenta cuenta) {
 		System.out.println("Cuanto dinero quiere ingresar?");
 		cuenta.ingresarDinero(Double.parseDouble(sc.nextLine()));
-	
+
 	}
 
+	/**
+	 * Devuelve el saldo total de la cuenta especificada.
+	 * 
+	 * @param cuenta
+	 */
 	private static void consultarSaldo(Cuenta cuenta) {
 		System.out.println(cuenta);
-	
+
 	}
 
 	private static void menuAdmin() {
@@ -253,9 +333,13 @@ public class AplicacionBanco {
 		System.out.println("5. Eliminar un cliente");
 		System.out.println("4. Eliminar una cuenta");
 		System.out.println("7. Volver a menu principal");
-	
+
 	}
 
+	/**
+	 * Menu de acceso de operaciones a nivel de administrador, eliminar objetos,
+	 * actualizar saldo, cambiar comisiones..
+	 */
 	private static void accesoAdmin() {
 
 		String opcion;
@@ -295,32 +379,42 @@ public class AplicacionBanco {
 		} while (!opcion.equals("7"));
 	}
 
+	/**
+	 * Lista todas las cuentas del banco.
+	 */
 	private static void listarCuentas() {
-		clientes.values().forEach(c -> c.getCuentas().forEach(d -> System.out.println(d)));
-	
+		clientes.values().stream().flatMap(c -> c.getCuentas().stream()).forEach(d -> System.out.println(d));
+
 	}
 
+	/**
+	 * Lista todos los clientes del banco
+	 */
 	private static void listarClientes() {
-	
+
 		clientes.values().forEach(c -> System.out.println(c));
-	
+
 	}
 
+	/**
+	 * Elimina una cuenta del banco, segun su codigo.
+	 */
 	private static void eliminarCuenta() {
 		System.out.println("Codigo de la cuenta a eliminar?");
 		int codigo = Integer.parseInt(sc.nextLine());
 
-		clientes.values().stream().flatMap(c -> c.getCuentas().stream())
-				.forEach(d ->{
-					if (d.getnCuenta() == codigo) {
-						d.getCliente().getCuentas().remove(d);
-						--contCuentas;
-					}
-				});		
-				
-	
+		clientes.values().stream().flatMap(c -> c.getCuentas().stream()).forEach(d -> {
+			if (d.getnCuenta() == codigo) {
+				d.getCliente().getCuentas().remove(d);
+				--contCuentas;
+			}
+		});
+
 	}
 
+	/**
+	 * Elimina un cliente y todas sus cuentas del banco, segun el dni del cliente.
+	 */
 	private static void eliminarCliente() {
 		System.out.println("DNI del cliente a eliminar?");
 		String dni = sc.nextLine();
@@ -331,27 +425,35 @@ public class AplicacionBanco {
 			System.out.println("No existe el cliente");
 	}
 
+	/**
+	 * Cambia la comision de una cuenta, segun el numero de cuenta
+	 */
+
 	private static void cambiarComision() {
 		System.out.println("Codigo de cuenta a cambiar?");
 		int codigo = Integer.parseInt(sc.nextLine());
 		System.out.println("Nueva comision de la cuenta?");
 		double comision = Double.parseDouble(sc.nextLine());
-		clientes.values().stream().flatMap(c -> c.getCuentas().stream())
 
-				.filter(c -> codigo == c.getnCuenta()).findFirst().orElse(null).setComision(comision);
+		clientes.values().stream()
+		.flatMap(c -> c.getCuentas().stream())
+		.filter(c -> codigo == c.getnCuenta())
+		.findFirst()
+		.orElse(null)
+		.setComision(comision);
 
 	}
+	/**
+	 * Aplica la revision mensual a cada cuenta, actualizando su saldo segun su interes y comision.
+	 */
 
 	private static void revisionMensual() {
-		clientes.values().parallelStream().forEach(
 
-				c -> c.getCuentas().
+		clientes.values().stream()
+		.flatMap(c -> c.getCuentas().stream())
+		.parallel()
+		.forEach(d -> d.actualizarSaldo());
 
-						forEach(
-
-								d -> d.actualizarSaldo()
-
-						));
 	}
 
 }
