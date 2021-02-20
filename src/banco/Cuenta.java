@@ -69,7 +69,6 @@ public class Cuenta {
 		this.nCuenta = nCuenta;
 	}
 	
-	
 
 	public Cliente getCliente() {
 		return cliente;
