@@ -58,7 +58,7 @@ public class Cuenta {
 	
 	public void actualizarSaldo() {
 		
-		saldo += saldo * interes - comision;
+		saldo += saldo * interes/100 - comision;
 	}
 
 	public int getnCuenta() {

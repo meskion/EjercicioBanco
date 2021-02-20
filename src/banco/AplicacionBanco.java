@@ -131,7 +131,6 @@ public class AplicacionBanco {
 		do {
 			menu2();
 			opcion = sc.nextLine();
-
 			switch (opcion) {
 			case "1":
 				nuevaCuenta(cliente);
@@ -139,11 +138,9 @@ public class AplicacionBanco {
 			case "2":
 				accesoCuenta(cliente);
 				break;
-
 			case "3":
 				listarCuentas(cliente);
 				break;
-
 			case "4":
 				saldoTotal(cliente);
 				break;
